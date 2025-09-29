@@ -1,0 +1,54 @@
+/* CRITICAL: NO EXTERNAL FONT IMPORTS - PREVENTS 502 ERRORS */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Define custom font family variables - system fonts only */
+:root {
+  --font-family-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --font-family-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* EMERGENCY FONT OVERRIDE - SYSTEM FONTS ONLY */
+html, body, *, *::before, *::after {
+  font-family: var(--font-family-primary) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Override any potential Mocha watermark font issues */
+.mocha-watermark,
+[class*="mocha"],
+[id*="mocha"] {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* FORCE SYSTEM FONTS ON ALL ELEMENTS */
+* {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* BLOCK ANY ATTEMPTS TO LOAD EXTERNAL FONTS */
+@font-face {
+  font-family: "Inter";
+  src: none !important;
+}
+
+/* Instrument Sans font face removed to prevent 502 errors */
+
+/* OVERRIDE ANY EXTERNAL FONT REFERENCES */
+*[style*="Inter"], 
+/* Instrument Sans selector removed */ 
+*[style*="font-family"],
+.font-inter,
+.font-instrument,
+[class*="font-"] {
+  font-family: var(--font-family-primary) !important;
+}
+
+/* Headings use the heading font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: 600;
+}
