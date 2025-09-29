@@ -1,31 +1,23 @@
-# Use Python 3.11 slim image
-FROM python:3.11-slim
+# Use Node 18 (LTS) slim image
+FROM node:18-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies needed for faiss and numpy
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libopenblas-dev \
-    libomp-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Copy package.json only (no lock file)
+COPY package.json ./
 
-# Copy requirements.txt
-COPY requirements.txt .
+# Install dependencies
+RUN npm install --production
 
-# Upgrade pip and install dependencies cleanly
-RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
+# Copy the rest of the source
 COPY . .
 
-# Environment settings
-ENV PYTHONUNBUFFERED=1
+# Build the app (adjust if you don’t have a build script)
+RUN npm run build
 
-# Expose port (Railway overrides with $PORT)
-EXPOSE 8000
+# Expose default Railway port
+EXPOSE 3000
 
-# Start FastAPI app (single worker for stability on Railway free tier)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start the app
+CMD ["npm", "start"]
