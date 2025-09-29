@@ -1,23 +1,28 @@
-# Use Node 18 (LTS) slim image
-FROM node:18-slim
+# Use Python as the base image
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json only (no lock file)
-COPY package.json ./
+# Install system dependencies (needed for many Python packages)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libopenblas-dev \
+    libomp-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
-RUN npm install --production
+# Copy requirements.txt from subdirectory
+COPY railway-deployment/requirements.txt ./requirements.txt
 
-# Copy the rest of the source
+# Upgrade pip and install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the project
 COPY . .
 
-# Build the app (adjust if you don’t have a build script)
-RUN npm run build
+# Expose port (adjust if your app uses a different one)
+EXPOSE 8000
 
-# Expose default Railway port
-EXPOSE 3000
-
-# Start the app
-CMD ["npm", "start"]
+# Start command (update with your app’s entry point)
+CMD ["python", "src/main.py"]
